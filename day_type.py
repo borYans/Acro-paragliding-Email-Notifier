@@ -76,17 +76,18 @@ def is_flyable_day(forecast):
     date = dt.datetime.strptime(forecast['dt_txt'], DATE_TIME_FORMAT)
 
     is_wind_valid = (wind_speed in WIND_SPEED_RANGE) and (wind_gust in WIND_GUSTS_RANGE)
-    is_temperature_valid = temp > TEMP_CONSTANT
+    is_temperature_valid = temp < TEMP_CONSTANT
     is_wind_direction_valid = wind_direction in converter.N_1 or wind_direction in converter.N_2
     is_cloud_valid = clouds_percentage in CLOUD_COVER
     is_humidity_valid = humidity_percentage in MEDIUM_AIR_HUMIDITY
     is_pressure_valid = pressure in FIZZY_DAY
     is_rain_valid = rain_probability < RAIN_PROBABILITY
 
-    is_flyable_condition = is_temperature_valid and is_rain_valid and is_pressure_valid and is_humidity_valid \
-                           and is_cloud_valid \
-                           and is_wind_direction_valid \
-                           and is_wind_valid
+    is_flyable_condition = is_temperature_valid \
+                           # and is_rain_valid and is_pressure_valid and is_humidity_valid \
+                           # and is_cloud_valid \
+                           # and is_wind_direction_valid \
+                           # and is_wind_valid
     return is_flyable_condition
 
 
