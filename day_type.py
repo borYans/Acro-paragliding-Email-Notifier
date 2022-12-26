@@ -157,11 +157,11 @@ def get_mail_content(
 def short_description(pressure, wind, hour, cloud_percentage):
     description = ""
     if pressure < 1015:
-        description += f" Vo {hour}h pritisokot ke bide dosta nizok i termikite ke se otkacuvaat" \
+        description += f" Pritisokot ke bide dosta nizok i termikite ke se otkacuvaat" \
                        f" na mnogu mala promena na reljefot. Intervalite dosta kratki," \
                        f" vnimatelno biraj moment za poletuvanje."
     else:
-        description += f" Vo {hour}h pritisokot ke bide odlicen. Dovolno nizok kade ke treba mala energija na sonceto" \
+        description += f" Pritisokot ke bide odlicen. Dovolno nizok kade ke treba mala energija na sonceto" \
                        f" da generira termika.\n"
 
     if cloud_percentage < 40:
