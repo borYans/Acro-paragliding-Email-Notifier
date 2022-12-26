@@ -1,3 +1,5 @@
+import datetime
+
 import converter
 import datetime as dt
 
@@ -34,12 +36,14 @@ list_of_forecasts = []
 # returns dictionary with [key] = day of the week, and [value] = list of 3 hours forecasts [max 3 forecast]
 def extract_day_forecast_object(five_days_forecast, city):
     potential_flyable_days = dict()
+    current_day = datetime.datetime.today().now()
     for three_hour_forecast in five_days_forecast:
         timestamp = three_hour_forecast['dt']
         current_timestamp = city['timezone']
         date = dt.datetime.fromtimestamp(timestamp - current_timestamp)
         previous_day_name = (date - dt.timedelta(days=1)).strftime("%A")
-        is_next_day = date.hour == 0
+        is_next_day = current_day.day != date.day
+        current_day = date
         if is_next_day:
             potential_flyable_days[previous_day_name] = list_of_forecasts
         else:
@@ -57,7 +61,7 @@ def extract_day_forecast_object(five_days_forecast, city):
 def calculate_conditions_and_prepare_mail(forecast_days):
     days_to_fly = dict()
     for day, flyable_days in forecast_days.items():
-        full_day = {day: list(filter(lambda fly_day: len(fly_day) >= 3, flyable_days))}
+        full_day = {day: list(filter(lambda fly_day: len(fly_day) >= 2, flyable_days))}
         days_to_fly = full_day
 
     return days_to_fly
