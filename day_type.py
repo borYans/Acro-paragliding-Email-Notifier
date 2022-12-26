@@ -137,7 +137,7 @@ def compose_mail(list_of_three_hour_forecasts, city):
 def get_mail_content_with_short_desc(
         date, temp, wind_direction, wind_speed, wind_gust, humidity_percentage, pressure, cloud_percentage):
     return f"Kratok opis na denot: " \
-           f"{short_description(pressure, wind_speed, date.hour, cloud_percentage)}\n\n" \
+           f"{short_description(pressure, wind_speed, cloud_percentage)}\n\n" \
            f"\nPROGNOZA vo {date.hour}h na den {date} ({date.strftime('%A')})\nTemperatura: {round(temp)}C\n" \
            f"Veter: {wind_direction} {round(wind_speed)} m/s\n" \
            f"Veter na udari: {round(wind_gust)} m/s\n" \
@@ -154,7 +154,7 @@ def get_mail_content(
            f"Oblacnost: {cloud_percentage} %\n\n"
 
 
-def short_description(pressure, wind, hour, cloud_percentage):
+def short_description(pressure, wind, cloud_percentage):
     description = ""
     if pressure < 1015:
         description += f" Pritisokot ke bide dosta nizok i termikite ke se otkacuvaat" \
