@@ -9,13 +9,13 @@ NOT_FLYABLE_DAY_TYPE = ""
 FIZZY_DAY = range(1013, 1022)
 
 # Humidity constants
-MEDIUM_AIR_HUMIDITY = range(31, 60)
+MEDIUM_AIR_HUMIDITY = range(25, 60)
 
 # Cloud cover constants
 CLOUD_COVER = range(0, 80)
 
 # Wind speed constants
-WIND_SPEED_RANGE = (3, 7)
+WIND_SPEED_RANGE = (3, 8)
 WIND_GUSTS_RANGE = (0, 8)
 
 # Time of the day constant
@@ -23,7 +23,7 @@ DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 DAY_TIME = range(8, 16)
 
 # Temperature constants
-TEMP_CONSTANT = 8
+TEMP_CONSTANT = 20
 
 # Rain constants
 RAIN_PROBABILITY = 30
@@ -48,7 +48,7 @@ def extract_day_forecast_object(five_days_forecast, city):
             potential_flyable_days[previous_day_name] = list_of_forecasts
         else:
             if date.hour in DAY_TIME:
-                is_accepted_forecast = is_flyable_day(forecast=three_hour_forecast)
+                is_accepted_forecast = is_flyable_day(forecast=three_hour_forecast, hour=date.hour)
                 if is_accepted_forecast:
                     list_of_forecasts.append(three_hour_forecast)
 
@@ -68,7 +68,7 @@ def calculate_conditions_and_prepare_mail(forecast_days):
 
 
 # Validate if day is flyable based on several conditions.
-def is_flyable_day(forecast):
+def is_flyable_day(forecast, hour):
     temp = converter.kelvin_to_celsius(forecast['main']['temp'])
     wind_speed = round(forecast['wind']['speed'])
     wind_gust = round(forecast['wind']['gust'])
@@ -77,7 +77,6 @@ def is_flyable_day(forecast):
     humidity_percentage = forecast['main']['humidity']
     pressure = forecast['main']['pressure']
     rain_probability = forecast['pop']
-    date = dt.datetime.strptime(forecast['dt_txt'], DATE_TIME_FORMAT)
 
     is_wind_valid = (wind_speed in WIND_SPEED_RANGE) and (wind_gust in WIND_GUSTS_RANGE)
     is_temperature_valid = temp < TEMP_CONSTANT
@@ -88,10 +87,9 @@ def is_flyable_day(forecast):
     is_rain_valid = rain_probability < RAIN_PROBABILITY
 
     is_flyable_condition = is_temperature_valid \
-                           # and is_rain_valid and is_pressure_valid and is_humidity_valid \
-                           # and is_cloud_valid \
-                           # and is_wind_direction_valid \
-                           # and is_wind_valid
+                           and is_rain_valid and is_pressure_valid and is_humidity_valid \
+                           and is_cloud_valid and is_wind_direction_valid and is_wind_valid
+
     return is_flyable_condition
 
 
