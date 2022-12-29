@@ -9,7 +9,8 @@ e_mails = [
     "antoniolukovski701@gmail.com",
     "nikola.eftovski@gmail.com",
     "usamedin.nuhiji@gmail.com",
-    "dartanjan15@gmail.com"
+    "dartanjan15@gmail.com",
+    "acromacedonia@gmail.com"
 ]
 
 
