@@ -32,7 +32,7 @@ list_of_forecasts = []
 
 
 # Takes five-day forecast with every 3h data object and calculates which days are potentially flyable.
-# Validate only forecast which are between 12'o clock and 18'o clock.
+# Validate only forecast which are between 8'o clock and 16'o clock.
 # returns dictionary with [key] = day of the week, and [value] = list of 3 hours forecasts [max 3 forecast]
 def extract_day_forecast_object(five_days_forecast, city):
     potential_flyable_days = dict()
@@ -48,7 +48,7 @@ def extract_day_forecast_object(five_days_forecast, city):
             potential_flyable_days[previous_day_name] = list_of_forecasts
         else:
             if date.hour in DAY_TIME:
-                is_accepted_forecast = is_flyable_day(forecast=three_hour_forecast, hour=date.hour)
+                is_accepted_forecast = is_flyable_day(forecast=three_hour_forecast)
                 if is_accepted_forecast:
                     list_of_forecasts.append(three_hour_forecast)
 
@@ -68,7 +68,7 @@ def calculate_conditions_and_prepare_mail(forecast_days):
 
 
 # Validate if day is flyable based on several conditions.
-def is_flyable_day(forecast, hour):
+def is_flyable_day(forecast):
     temp = converter.kelvin_to_celsius(forecast['main']['temp'])
     wind_speed = round(forecast['wind']['speed'])
     wind_gust = round(forecast['wind']['gust'])
