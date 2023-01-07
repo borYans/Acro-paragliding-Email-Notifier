@@ -12,21 +12,23 @@ locations = {
 }
 sorted_locations = sorted(locations.items())
 
+
+def is_valid_response(response_code):
+    return response_code == 200
+
+
 for site, coordinates in sorted_locations:
-    print(f"Getting values for {site}")
+    print(f"\nGetting values for {site}")
     url = BASE_URL + "lat=" + coordinates[0] + "&lon=" + coordinates[1] + "&appid=" + API_KEY
     response_body = requests.get(url)
 
-    if response_body.status_code == 200:
+    if is_valid_response(response_body.status_code):
         response = response_body.json()
         five_weather_data = response['list']
         city = response['city']
         potential_flyable_days = day_type.extract_day_forecast_object(five_weather_data, city, site)
         valid_flyable_days = day_type.calculate_conditions_and_prepare_mail(potential_flyable_days)
         valid_flyable_forecasts = day_type.get_flyable_forecasts(valid_flyable_days)
-        mail = day_type.compose_mail(valid_flyable_forecasts, city)
-        if mail != constants.NOT_FLYABLE_DAY_TYPE:
-            email.send_mail(mail_subject=f"Acro na {site} - DETALNA PROGNOZA", mail_content=mail)
+        day_type.create_and_send_mails(valid_flyable_forecasts, city, site)
     else:
-        email.send_mail(mail_subject=f"Acro na {site} - DETALNA ANALIZA",
-                        mail_content="Ne sme vo moznost da dobieme podatoci od vremenska prognoza.")
+        print(f"Exception occured with response code: {response_body.status_code}")

@@ -4,6 +4,8 @@ import converter
 import constants
 import datetime as dt
 
+from mail_factory import MailFactory
+
 list_of_forecasts = []
 VODNO_SITE = 'Vodno'
 OSOJ_SITE = 'Osoj'
@@ -64,8 +66,6 @@ def is_flyable_at_the_site(day_conditions, site_ranges):
     is_flyable_condition = is_temperature_valid \
                            and is_rain_valid and is_pressure_valid and is_humidity_valid \
                            and is_cloud_valid and is_wind_direction_valid and is_wind_valid
-
-    print(f"Currently is flyable at the site [True, False]: {is_flyable_condition}")
 
     return is_flyable_condition
 
@@ -133,78 +133,28 @@ def get_flyable_forecasts(days_to_fly):
 
 
 # Create a mail for every flyable forecast in detail.
-def compose_mail(list_of_three_hour_forecasts, city):
-    flyable_days_mail = ""
-    index = 0
+def create_and_send_mails(list_of_three_hour_forecasts, city, take_off_site):
     for flyable in list_of_three_hour_forecasts:
         timestamp = flyable['dt']
         current_timestamp = city['timezone']
         date = dt.datetime.fromtimestamp(timestamp - current_timestamp)
-        temp = converter.kelvin_to_celsius(flyable['main']['temp'])
-        wind_speed = flyable['wind']['speed']
-        humidity_percentage = flyable['main']['humidity']
-        pressure = flyable['main']['pressure']
-        cloud_percentage = flyable['clouds']['all']
-        wind_direction = converter.get_wind_direction(flyable['wind']['deg'])
-        wind_gust = flyable['wind']['gust']
 
-        if index == 0:
-            flyable_days_mail += get_mail_content_with_short_desc(
-                date, temp, wind_direction, wind_speed, wind_gust, humidity_percentage, pressure, cloud_percentage
-            )
-        else:
-            flyable_days_mail += get_mail_content(
-                date, temp, wind_direction, wind_speed, wind_gust, humidity_percentage, pressure, cloud_percentage
-            )
-        index += 1
+        three_hour_forecast = day_conditions_data_model.DayConditions(
+            temp=converter.kelvin_to_celsius(flyable['main']['temp']),
+            wind_speed=flyable['wind']['speed'],
+            humidity_percentage=flyable['main']['humidity'],
+            pressure=flyable['main']['pressure'],
+            cloud_percentage=flyable['clouds']['all'],
+            wind_direction=converter.get_wind_direction(flyable['wind']['deg']),
+            wind_gusts=flyable['wind']['gust'],
+            rain_probability=0
+        )
 
-    print(flyable_days_mail)
-    return flyable_days_mail
+        if take_off_site == OSOJ_SITE:
+            MailFactory.send_mail(mail_type=OSOJ_SITE, wind=three_hour_forecast.wind_speed,
+                                  wind_gust=three_hour_forecast.wind_gusts, date=date)
+        elif take_off_site == VODNO_SITE:
+            MailFactory.send_mail(mail_type=VODNO_SITE, wind=three_hour_forecast.wind_speed,
+                                  wind_gust=three_hour_forecast.wind_gusts, date=date)
 
-
-def get_mail_content_with_short_desc(
-        date, temp, wind_direction, wind_speed, wind_gust, humidity_percentage, pressure, cloud_percentage):
-    return f"Kratok opis na denot: " \
-           f"{short_description(pressure, wind_speed, cloud_percentage)}\n\n" \
-           f"\nPROGNOZA vo {date.hour}h na den {date} ({date.strftime('%A')})\nTemperatura: {round(temp)}C\n" \
-           f"Veter: {wind_direction} {round(wind_speed)} m/s\n" \
-           f"Veter na udari: {round(wind_gust)} m/s\n" \
-           f"Pritisok: {pressure} hPa\nRelativna vlaznost: {humidity_percentage}%.\n" \
-           f"Oblacnost: {cloud_percentage} %\n\n"
-
-
-def get_mail_content(
-        date, temp, wind_direction, wind_speed, wind_gust, humidity_percentage, pressure, cloud_percentage):
-    return f"\nPROGNOZA vo {date.hour}h na den {date} ({date.strftime('%A')})\nTemperatura: {round(temp)}C\n" \
-           f"Veter: {wind_direction} {round(wind_speed)} m/s\n" \
-           f"Veter na udari: {round(wind_gust)} m/s\n" \
-           f"Pritisok: {pressure} hPa\nRelativna vlaznost: {humidity_percentage}%.\n" \
-           f"Oblacnost: {cloud_percentage} %\n\n"
-
-
-def short_description(pressure, wind, cloud_percentage):
-    description = ""
-    if pressure < 1015:
-        description += f" Pritisokot ke bide dosta nizok i termikite ke se otkacuvaat" \
-                       f" na mnogu mala promena na reljefot. Intervalite dosta kratki," \
-                       f" vnimatelno biraj moment za poletuvanje."
-    else:
-        description += f" Pritisokot ke bide odlicen. Dovolno nizok kade ke treba mala energija na sonceto" \
-                       f" da generira termika.\n"
-
-    if cloud_percentage < 40:
-        description += f"Na momenti ke ima intervali kade sto oblaci ke go pokrivaat trigerot na nivite podolu.\n" \
-                       f"Najavena oblacnost e {cloud_percentage}% vo tekot na denot sto znacitelno ke " \
-                       f"drzat ciklusite za poletuvanje. " \
-                       f" Celo vreme treba da ima termika i da se leta podolgo vreme.\n"
-    else:
-        description += f"Pogolemi intervali na senka koj sto ke ja gasat termikata na odredeno vreme." \
-                       f" Trpelivo da se ceka na start za dobar i jak interval.\n"
-
-    if wind > 4:
-        description += f"Veterot jak i stabilen. Malku ke gi kosi stubovite i" \
-                       f" najdobro e da gi baras ponapred od padinata.\n"
-    else:
-        description += f"Nesto poslabo veterce ama dovolno da gi aktivira termikite od platoto dole." \
-                       f" Trpelivo da se priceka za poletuvanje.\n"
-    return description
+        break
