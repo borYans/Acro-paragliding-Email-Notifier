@@ -1,11 +1,10 @@
 import requests
 import day_type
+import constants
 import mail as email
 
 BASE_URL = "http://api.openweathermap.org/data/2.5/forecast?"
 API_KEY = "f066a787ecdffdc525046a86aaa638d2"
-LATITUDE = "41.94"
-LONGITUDE = "21.25"
 
 locations = {
     'Osoj': ['41.94', '21.25'],
@@ -22,11 +21,11 @@ for site, coordinates in sorted_locations:
         response = response_body.json()
         five_weather_data = response['list']
         city = response['city']
-        potential_flyable_days = day_type.extract_day_forecast_object(five_weather_data, city)
+        potential_flyable_days = day_type.extract_day_forecast_object(five_weather_data, city, site)
         valid_flyable_days = day_type.calculate_conditions_and_prepare_mail(potential_flyable_days)
         valid_flyable_forecasts = day_type.get_flyable_forecasts(valid_flyable_days)
         mail = day_type.compose_mail(valid_flyable_forecasts, city)
-        if mail != day_type.NOT_FLYABLE_DAY_TYPE:
+        if mail != constants.NOT_FLYABLE_DAY_TYPE:
             email.send_mail(mail_subject=f"Acro na {site} - DETALNA PROGNOZA", mail_content=mail)
     else:
         email.send_mail(mail_subject=f"Acro na {site} - DETALNA ANALIZA",
