@@ -2,7 +2,7 @@ NOT_FLYABLE_DAY_TYPE = ""
 
 # Vodno Mountain constants
 # Pressure constants
-FIZZY_DAY_VODNO = range(1013, 1021)
+FIZZY_DAY_VODNO = range(1013, 1019)
 # Humidity constants
 MEDIUM_AIR_HUMIDITY_VODNO = range(25, 60)
 # Cloud cover constants
@@ -19,7 +19,7 @@ RAIN_PROBABILITY_VODNO = 30
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Osoj Mountain constants
-FIZZY_DAY_OSOJ = range(1013, 1020)
+FIZZY_DAY_OSOJ = range(1013, 1019)
 # Humidity constants
 MEDIUM_AIR_HUMIDITY_OSOJ = range(15, 64)
 # Cloud cover constants
@@ -31,3 +31,18 @@ WIND_GUSTS_RANGE_OSOJ = (0, 8)
 TEMP_CONSTANT_OSOJ = 8
 # Rain constants
 RAIN_PROBABILITY_OSOJ = 30
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Ajvatovci constants
+PRESSURE_AJVATOVCI = range(1010, 1025)
+# Humidity constants
+MEDIUM_AIR_HUMIDITY_AJVATOVCI = range(15, 70)
+# Cloud cover constants
+CLOUD_COVER_AJVATOVCI = range(0, 100)
+# Wind speed constants
+WIND_SPEED_RANGE_AJVATOVCI = (4, 8)
+WIND_GUSTS_RANGE_AJVATOVCI = (0, 9)
+# Temperature constants
+TEMP_CONSTANT_AJVATOVCI = 5
+# Rain constants
+RAIN_PROBABILITY_AJVATOVCI = 30

@@ -20,5 +20,6 @@ class SiteRanges:
     cloud_cover_range: range
     wind_speed_range: range
     wind_gust_range: range
+    wind_direction_ranges: list
     minimum_temperature: int
     minimum_rain: int
