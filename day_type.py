@@ -11,11 +11,11 @@ list_of_forecasts = []
 VODNO_SITE = 'Vodno'
 OSOJ_SITE = 'Osoj'
 AJVATOVCI_SITE = 'Ajvatovci'
+SKOPSKA_CRNA_GORA = 'Skopska Crna Gora'
 
 
 # Takes five-day forecast with every 3h data object and calculates which days are potentially flyable.
 # Validate only forecast which are between 8'o clock and 16'o clock.
-# returns dictionary with [key] = day of the week, and [value] = list of 3 hours forecasts [max 3 forecast]
 def extract_day_forecast_object(five_days_forecast, city, take_off_site):
     current_day = datetime.datetime.today().now()
     for three_hour_forecast in five_days_forecast:
@@ -23,9 +23,9 @@ def extract_day_forecast_object(five_days_forecast, city, take_off_site):
         is_next_day = current_day.day != date.day
         current_day = date
         if is_next_day:
-            print(f"Flyable forecasts: {len(list_of_forecasts)}")
             if len(list_of_forecasts) >= 2:
-                print("\n\n")
+                print(f"Flyable forecasts: {len(list_of_forecasts)}")
+                print("\n")
                 first_flyable_forecast = list_of_forecasts[0]
                 mail_model = mail_factory.MailDataModel(
                     site=take_off_site,
@@ -78,7 +78,7 @@ def is_flyable_at_the_site(day_conditions, site_ranges):
 
     is_pressure_valid = day_conditions.pressure in site_ranges.pressure_range
 
-    is_rain_valid = day_conditions.rain_probability < site_ranges.minimum_rain
+    is_rain_valid = round((day_conditions.rain_probability * 100)) < site_ranges.minimum_rain
 
     is_flyable_condition = is_temperature_valid \
                            and is_rain_valid and is_pressure_valid and is_humidity_valid \
@@ -101,6 +101,10 @@ def is_flyable_day(forecast, site):
 
     elif site == AJVATOVCI_SITE:
         site_ranges = get_ranges_for_ajvatovci()
+        return is_flyable_at_the_site(day_conditions, site_ranges)
+
+    elif site == SKOPSKA_CRNA_GORA:
+        site_ranges = get_ranges_for_skopska_crna_gora()
         return is_flyable_at_the_site(day_conditions, site_ranges)
 
 
@@ -155,6 +159,20 @@ def get_ranges_for_ajvatovci():
         wind_gust_range=constants.WIND_GUSTS_RANGE_AJVATOVCI,
         minimum_temperature=constants.TEMP_CONSTANT_AJVATOVCI,
         minimum_rain=constants.RAIN_PROBABILITY_AJVATOVCI,
+        wind_direction_ranges=[converter.S, converter.SW, converter.SE, converter.SSE, converter.SSW, converter.ESE]
+    )
+    return site_ranges
+
+
+def get_ranges_for_skopska_crna_gora():
+    site_ranges = day_conditions_data_model.SiteRanges(
+        pressure_range=constants.PRESSURE_SKOPSKA_CRNA_GORA,
+        humidity_range=constants.MEDIUM_AIR_HUMIDITY_SKOPSKA_CRNA_GORA,
+        cloud_cover_range=constants.CLOUD_COVER_SKOPSKA_CRNA_GORA,
+        wind_speed_range=constants.WIND_SPEED_RANGE_SKOPSKA_CRNA_GORA,
+        wind_gust_range=constants.WIND_GUSTS_RANGE_SKOPSKA_CRNA_GORA,
+        minimum_temperature=constants.TEMP_CONSTANT_SKOPSKA_CRNA_GORA,
+        minimum_rain=constants.RAIN_PROBABILITY_SKOPSKA_CRNA_GORA,
         wind_direction_ranges=[converter.S, converter.SW, converter.SE, converter.SSE, converter.SSW, converter.ESE]
     )
     return site_ranges

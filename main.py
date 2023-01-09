@@ -7,7 +7,8 @@ API_KEY = "f066a787ecdffdc525046a86aaa638d2"
 locations = {
     'Osoj': ['41.94', '21.25'],
     'Vodno': ['41.9650', '21.3944'],
-    'Ajvatovci': ['42.0057', '21.6102']
+    'Ajvatovci': ['42.0057', '21.6102'],
+    'Skopska Crna Gora': ['42.1667', '42.1667']
 }
 sorted_locations = sorted(locations.items())
 

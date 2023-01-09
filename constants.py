@@ -38,7 +38,7 @@ PRESSURE_AJVATOVCI = range(1010, 1025)
 # Humidity constants
 MEDIUM_AIR_HUMIDITY_AJVATOVCI = range(15, 70)
 # Cloud cover constants
-CLOUD_COVER_AJVATOVCI = range(0, 100)
+CLOUD_COVER_AJVATOVCI = range(0, 105)
 # Wind speed constants
 WIND_SPEED_RANGE_AJVATOVCI = (4, 8)
 WIND_GUSTS_RANGE_AJVATOVCI = (0, 9)
@@ -46,3 +46,18 @@ WIND_GUSTS_RANGE_AJVATOVCI = (0, 9)
 TEMP_CONSTANT_AJVATOVCI = 5
 # Rain constants
 RAIN_PROBABILITY_AJVATOVCI = 30
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Skopska Crna gora constants
+PRESSURE_SKOPSKA_CRNA_GORA = range(1010, 1022)
+# Humidity constants
+MEDIUM_AIR_HUMIDITY_SKOPSKA_CRNA_GORA = range(15, 70)
+# Cloud cover constants
+CLOUD_COVER_SKOPSKA_CRNA_GORA = range(0, 105)
+# Wind speed constants
+WIND_SPEED_RANGE_SKOPSKA_CRNA_GORA = (4, 8)
+WIND_GUSTS_RANGE_SKOPSKA_CRNA_GORA = (0, 9)
+# Temperature constants
+TEMP_CONSTANT_SKOPSKA_CRNA_GORA = 5
+# Rain constants
+RAIN_PROBABILITY_SKOPSKA_CRNA_GORA = 30
