@@ -23,7 +23,7 @@ def extract_day_forecast_object(five_days_forecast, city, take_off_site):
         is_next_day = current_day.day != date.day
         current_day = date
         if is_next_day:
-            if len(list_of_forecasts) >= 2:
+            if len(list_of_forecasts) >= 1:
                 print(f"Flyable forecasts: {len(list_of_forecasts)}")
                 print("\n")
                 first_flyable_forecast = list_of_forecasts[0]
@@ -37,6 +37,8 @@ def extract_day_forecast_object(five_days_forecast, city, take_off_site):
                 MailFactory.send_mail(mail_model)
                 list_of_forecasts.clear()
                 break
+            else:
+                print(f"Not a flyable day at {take_off_site}")
 
         else:
             if date.hour in constants.DAY_TIME:
@@ -68,8 +70,6 @@ def is_flyable_at_the_site(day_conditions, site_ranges):
     is_wind_valid = (day_conditions.wind_speed in site_ranges.wind_speed_range) \
                     and (day_conditions.wind_gusts in site_ranges.wind_gust_range)
 
-    is_temperature_valid = day_conditions.temp > site_ranges.minimum_temperature
-
     is_wind_direction_valid = day_conditions.wind_direction in site_ranges.wind_direction_ranges
 
     is_cloud_valid = day_conditions.cloud_percentage in site_ranges.cloud_cover_range
@@ -80,8 +80,7 @@ def is_flyable_at_the_site(day_conditions, site_ranges):
 
     is_rain_valid = round((day_conditions.rain_probability * 100)) < site_ranges.minimum_rain
 
-    is_flyable_condition = is_temperature_valid \
-                           and is_rain_valid and is_pressure_valid and is_humidity_valid \
+    is_flyable_condition = is_rain_valid and is_pressure_valid and is_humidity_valid \
                            and is_cloud_valid and is_wind_direction_valid and is_wind_valid
 
     return is_flyable_condition

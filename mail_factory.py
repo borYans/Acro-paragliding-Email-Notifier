@@ -45,35 +45,28 @@ class MailFactory:
     @staticmethod
     def send_mail(mail_data_model):
         if mail_data_model.site == 'Vodno':
-            e_mail = Mail(
-                to=get_mails_from_config(),
-                subject="Letacki den na VODNO",
-                body=get_mail_content(mail_data_model)
-            )
+            e_mail = MailFactory.create_mail(mail_data_model, "Letacki den na VODNO")
             print(e_mail.body)
             mail.send_mail(e_mail)
         elif mail_data_model.site == 'Osoj':
-            e_mail = Mail(
-                to=get_mails_from_config(),
-                subject="Letacki den na OSOJ",
-                body=get_mail_content(mail_data_model)
-            )
+            e_mail = MailFactory.create_mail(mail_data_model, "Letacki den na Osoj")
             print(e_mail.body)
             mail.send_mail(e_mail)
         elif mail_data_model.site == 'Ajvatovci':
-            e_mail = Mail(
-                to=get_mails_from_config(),
-                subject="Edrenje/Freestyle na AJVATOVCI",
-                body=get_mail_content(mail_data_model)
-            )
+            e_mail = MailFactory.create_mail(mail_data_model, "Freestyle - Ajvatovci")
             print(e_mail.body)
             mail.send_mail(e_mail)
 
         elif mail_data_model.site == 'Skopska Crna Gora':
-            e_mail = Mail(
-                to=get_mails_from_config(),
-                subject="Edrenje/Freestyle na Skopska Crna Gora",
-                body=get_mail_content(mail_data_model)
-            )
+            e_mail = MailFactory.create_mail(mail_data_model, "Freestyle Skopska Crna gora")
             print(e_mail.body)
             mail.send_mail(e_mail)
+
+    @staticmethod
+    def create_mail(mail_data_model, subject):
+        e_mail = Mail(
+            to=get_mails_from_config(),
+            subject=subject,
+            body=get_mail_content(mail_data_model)
+        )
+        return e_mail

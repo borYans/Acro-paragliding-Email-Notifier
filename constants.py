@@ -19,7 +19,7 @@ RAIN_PROBABILITY_VODNO = 30
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Osoj Mountain constants
-FIZZY_DAY_OSOJ = range(1013, 1019)
+FIZZY_DAY_OSOJ = range(1013, 1020)
 # Humidity constants
 MEDIUM_AIR_HUMIDITY_OSOJ = range(15, 64)
 # Cloud cover constants
