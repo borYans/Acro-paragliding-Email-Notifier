@@ -1,20 +1,20 @@
-N_1 = range(348, 360)
-N_2 = range(0, 11)
-NNE = range(11, 34)
-NE = range(34, 56)
-ENE = range(56, 79)
-E = range(79, 101)
-ESE = range(101, 124)
-SE = range(124, 146)
-SSE = range(146, 169)
-S = range(169, 191)
-SSW = range(191, 214)
-SW = range(214, 236)
-WSW = range(236, 259)
-W = range(259, 281)
-WNW = range(281, 304)
-NW = range(304, 326)
-NNW = range(326, 348)
+N_1 = range(348, 361)
+N_2 = range(0, 12)
+NNE = range(11, 35)
+NE = range(34, 57)
+ENE = range(56, 80)
+E = range(79, 102)
+ESE = range(101, 125)
+SE = range(124, 147)
+SSE = range(146, 170)
+S = range(169, 192)
+SSW = range(191, 215)
+SW = range(214, 237)
+WSW = range(236, 260)
+W = range(259, 282)
+WNW = range(281, 305)
+NW = range(304, 327)
+NNW = range(326, 349)
 
 
 def kelvin_to_celsius(kelvin):
@@ -23,9 +23,7 @@ def kelvin_to_celsius(kelvin):
 
 
 def get_wind_direction(direction_in_degrees):
-    if direction_in_degrees in N_1 or N_2:
-        return "Sever"
-    elif direction_in_degrees in NNE:
+    if direction_in_degrees in NNE:
         return "Sever-Severoistok"
     elif direction_in_degrees in NE:
         return "Severoistok"
@@ -56,4 +54,4 @@ def get_wind_direction(direction_in_degrees):
     elif direction_in_degrees in NNW:
         return "Sever-Severozapad"
     else:
-        return "Nepoznat pravec na veter"
+        return "Sever"

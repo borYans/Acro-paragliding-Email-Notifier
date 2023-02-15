@@ -13,7 +13,7 @@ def send_mail(mail):
         print("Mail successfully sent.\n\n")
         with smtplib.SMTP("smtp.gmail.com") as connection:
             connection.starttls()  # this will make the connection secure
-            connection.login(user=sent_from, password=login_pass)
+            connection.login(user="boryans.yans@gmail.com", password="dicxsgwzqxrfyaay")
             connection.sendmail(
                 from_addr=sent_from,
                 to_addrs=mail_address,

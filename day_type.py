@@ -1,12 +1,13 @@
 import datetime
-import day_conditions_data_model
-import converter
-import constants
 import datetime as dt
 
+import constants
+import converter
+import day_conditions_data_model
 import mail_factory
 from mail_factory import MailFactory
 
+MINIMUM_FLYABLE_FORECASTS = 2
 list_of_forecasts = []
 VODNO_SITE = 'Vodno'
 OSOJ_SITE = 'Osoj'
@@ -23,7 +24,7 @@ def extract_day_forecast_object(five_days_forecast, city, take_off_site):
         is_next_day = current_day.day != date.day
         current_day = date
         if is_next_day:
-            if len(list_of_forecasts) >= 1:
+            if len(list_of_forecasts) >= MINIMUM_FLYABLE_FORECASTS:
                 print(f"Flyable forecasts: {len(list_of_forecasts)}")
                 print("\n")
                 first_flyable_forecast = list_of_forecasts[0]
@@ -34,12 +35,9 @@ def extract_day_forecast_object(five_days_forecast, city, take_off_site):
                     wind_gust=get_wind_gusts(first_flyable_forecast),
                     date=get_date(city, first_flyable_forecast)
                 )
-                MailFactory.send_mail(mail_model)
+                MailFactory.prepare_and_send_mail(mail_model)
                 list_of_forecasts.clear()
                 break
-            else:
-                print(f"Not a flyable day at {take_off_site}")
-
         else:
             if date.hour in constants.DAY_TIME:
                 is_accepted_forecast = is_flyable_day(forecast=three_hour_forecast, site=take_off_site)
@@ -66,24 +64,40 @@ def get_wind_direction(three_hour_forecast):
     return round(three_hour_forecast['wind']['deg'])
 
 
-def is_flyable_at_the_site(day_conditions, site_ranges):
+def is_flyable_at_the_site(day_conditions, site_ranges, take_off):
+    print(f"\nValues for {take_off}")
+
     is_wind_valid = (day_conditions.wind_speed in site_ranges.wind_speed_range) \
                     and (day_conditions.wind_gusts in site_ranges.wind_gust_range)
 
-    is_wind_direction_valid = day_conditions.wind_direction in site_ranges.wind_direction_ranges
+    is_wind_direction_valid = False
+    for site_range in site_ranges.wind_direction_ranges:
+        if day_conditions.wind_direction in site_range:
+            is_wind_direction_valid = True
+            break
 
     is_cloud_valid = day_conditions.cloud_percentage in site_ranges.cloud_cover_range
-
     is_humidity_valid = day_conditions.humidity_percentage in site_ranges.humidity_range
-
     is_pressure_valid = day_conditions.pressure in site_ranges.pressure_range
-
     is_rain_valid = round((day_conditions.rain_probability * 100)) < site_ranges.minimum_rain
-
     is_flyable_condition = is_rain_valid and is_pressure_valid and is_humidity_valid \
                            and is_cloud_valid and is_wind_direction_valid and is_wind_valid
 
+    if not is_flyable_condition:
+        print_report(day_conditions, is_cloud_valid, is_humidity_valid, is_pressure_valid, is_rain_valid,
+                     is_wind_direction_valid, is_wind_valid)
+
     return is_flyable_condition
+
+
+def print_report(day_conditions, is_cloud_valid, is_humidity_valid, is_pressure_valid, is_rain_valid,
+                 is_wind_direction_valid, is_wind_valid):
+    print(f"Rain range valid: [{is_rain_valid}] - {day_conditions.rain_probability * 100}%\n"
+          f"Pressure range valid: [{is_pressure_valid}]- {day_conditions.pressure}hPa\n"
+          f"Humidity range valid: [{is_humidity_valid}]- {day_conditions.humidity_percentage}%\n"
+          f"Cloud cover valid: [{is_cloud_valid}] - {day_conditions.cloud_percentage}%\n"
+          f"Wind direction valid: [{is_wind_direction_valid}] - {day_conditions.wind_direction} = {converter.get_wind_direction(day_conditions.wind_direction)}\n"
+          f"Wind speed valid: [{is_wind_valid}] - {day_conditions.wind_speed}m/s / {day_conditions.wind_gusts}m/s")
 
 
 # Validate if day is flyable based on several conditions.
@@ -92,19 +106,19 @@ def is_flyable_day(forecast, site):
 
     if site == VODNO_SITE:
         site_ranges = get_ranges_for_vodno()
-        return is_flyable_at_the_site(day_conditions, site_ranges)
+        return is_flyable_at_the_site(day_conditions, site_ranges, site)
 
     elif site == OSOJ_SITE:
         site_ranges = get_ranges_for_osoj()
-        return is_flyable_at_the_site(day_conditions, site_ranges)
+        return is_flyable_at_the_site(day_conditions, site_ranges, site)
 
     elif site == AJVATOVCI_SITE:
         site_ranges = get_ranges_for_ajvatovci()
-        return is_flyable_at_the_site(day_conditions, site_ranges)
+        return is_flyable_at_the_site(day_conditions, site_ranges, site)
 
     elif site == SKOPSKA_CRNA_GORA:
         site_ranges = get_ranges_for_skopska_crna_gora()
-        return is_flyable_at_the_site(day_conditions, site_ranges)
+        return is_flyable_at_the_site(day_conditions, site_ranges, site)
 
 
 def get_day_conditions_from_response(forecast):

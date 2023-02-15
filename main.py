@@ -18,7 +18,6 @@ def is_valid_response(response_code):
 
 
 for site, coordinates in sorted_locations:
-    print(f"\nGetting values for {site}")
     url = BASE_URL + "lat=" + coordinates[0] + "&lon=" + coordinates[1] + "&appid=" + API_KEY
     response_body = requests.get(url)
 
